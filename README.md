@@ -57,6 +57,6 @@ Microcode: Ensure intel-ucode or amd-ucode is installed before running grub-mkco
 
 Mount Points: Double-check if your EFI partition is mounted at /boot or /efi. Check your /etc/fstab if unsure.
 
-NVMe Drives: If you are using an NVMe SSD (like on an Excalibur laptop), your partitions will look like /dev/nvme0n1pX.
+NVMe Drives: If you are using an NVMe SSD (like on an gaming laptop), your partitions will look like /dev/nvme0n1pX.
 
 Disclaimer: This is a general guide. Always verify your partition names before running commands.
