@@ -1,4 +1,3 @@
-Markdown
 # 🛠️ Arch Linux Btrfs Boot Repair Guide
 
 A universal guide to fixing boot failures on Arch Linux after performing a Btrfs snapshot rollback. This method addresses "emergency shell" or "GRUB rescue" errors caused by out-of-sync **initramfs** and **bootloader** configurations.
