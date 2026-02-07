@@ -1,11 +1,11 @@
 # 🛠️ Arch Linux Btrfs Boot Repair Guide
 
-A practical guide to fixing boot failures on Arch Linux after performing a Btrfs snapshot rollback. This guide is specifically designed for users who encounter the "emergency shell" or "GRUB rescue" issue due to subvolume mismatches.
+A universal guide to fixing boot failures on Arch Linux after performing a Btrfs snapshot rollback. This method works regardless of your hardware (Intel/AMD/Nvidia) and is designed to fix "emergency shell" or "GRUB rescue" errors.
 
 ---
 
 ## 🔍 The Problem
-After restoring a `@` (root) subvolume from a snapshot, the system often fails to boot because the **initramfs** and **bootloader** (GRUB/systemd-boot) configurations are still looking for the old subvolume state or the kernel images in `/boot` are out of sync.
+After restoring a `@` (root) subvolume from a snapshot, the system often fails to boot because the **initramfs** and **bootloader** (GRUB/systemd-boot) configurations are out of sync with the new subvolume state.
 
 
 
@@ -14,11 +14,13 @@ After restoring a `@` (root) subvolume from a snapshot, the system often fails t
 ## 🚀 Recovery Steps
 
 ### 1. Identify Partitions
-Boot from your **Arch Linux Live USB** and identify your partitions:
+Boot from your **Arch Linux Live USB** and identify your drive names:
 ```bash
 lsblk
+Note: Identify your Btrfs partition (e.g., /dev/sda2) and your EFI partition (e.g., /dev/sda1).
+
 2. Mount and Setup
-Mount the top-level Btrfs volume to ensure your snapshot is correctly named as the active root (@). Replace /dev/sdXy with your actual partition.
+Mount the top-level Btrfs volume to ensure your snapshot is correctly named as the active root (@).
 
 Bash
 # Mount the parent Btrfs partition (ID 5 is the top-level)
@@ -28,13 +30,13 @@ mount -o subvolid=5 /dev/sdXy /mnt
 mv /mnt/@ /mnt/@_broken_backup
 mv /mnt/@snapshots/your-snapshot-name /mnt/@
 3. Chroot & Repair
-Now, mount the corrected subvolume and the EFI partition to enter the system environment:
+Mount the restored subvolume and the EFI partition to enter the system environment:
 
 Bash
 # Mount the restored root
 mount -o subvol=@ /dev/sdXy /mnt
 
-# Mount the EFI partition (Crucial!)
+# Mount the EFI partition (Required for bootloader updates)
 mount /dev/sdXz /mnt/boot
 
 # Enter the system
@@ -42,13 +44,13 @@ arch-chroot /mnt
 Once inside the chroot, synchronize the kernel and the bootloader:
 
 Bash
-# Regenerate initramfs
+# Regenerate initramfs for all kernels
 mkinitcpio -P
 
 # Update GRUB configuration
 grub-mkconfig -o /boot/grub/grub.cfg
 4. Finalize
-Exit the environment and reboot your system:
+Exit and unmount everything safely:
 
 Bash
 exit
